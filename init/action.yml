@@ -21,7 +21,7 @@ runs:
 #        unzip terraform_1.3.8_linux_amd64.zip
 #        rm terraform_1.3.8_linux_amd64.zip
 #        terraform -v
-        TERRAFORM_VERSION = `curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64'  | tail -1`
+        TERRAFORM_VERSION=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         echo $TERRAFORM_VERSION
         # terraform -v
 
