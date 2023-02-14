@@ -10,6 +10,15 @@ inputs:
     description: 'Target version of Terraform, by default uses the latest'
     required: false
     default: 'latest'
+  private_key:
+    description: 'Content of the private key'
+    required: true
+  private_key_password:
+    description: 'Private key password'
+    required: false
+  fingerprint:
+    description: 'Fingerprint of your private key'
+    required: true
 
 runs:
   using: "composite"
@@ -30,9 +39,9 @@ runs:
         echo ":: Running INIT"
         IFS=
         echo ":: Preparing secrets"
-        export TF_VAR_PRIVATE_KEY="${{ secrets.TF_VAR_PRIVATE_KEY }}"
-        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ secrets.TF_VAR_PRIVATE_KEY_PASSWORD }}"
-        export TF_VAR_FINGERPRINT="${{ secrets.TF_VAR_FINGERPRINT }}"
+        export TF_VAR_PRIVATE_KEY="${{ input.private_key }}"
+        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ input.private_key_password }}"
+        export TF_VAR_FINGERPRINT="${{ input.private_key_fingerprint }}"
         echo ":: Injecting secrets"
         eval "IFS=\"\n\"; echo \"$(<terraform/secrets_override.yaml)\"" > terraform/secrets_override.yaml
 
