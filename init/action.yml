@@ -31,10 +31,15 @@ runs:
       shell: bash
       run: |
         echo "::debug::Download terraform"
+        mkdir -p .binary
+        PWD=`pwd`
+        echo "::debug::Adding path"
+        echo "${PWD}/.binary" >> $GITHUB_PATH
+        cd .binary
         TERRAFORM_URL=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         wget -q -O terraform_archive.zip ${TERRAFORM_URL}
         unzip -qq -o terraform_archive.zip
-        rm terraform_archive.zip
+        rm -rf terraform_archive.zip
         terraform -v
 
     - name: "Prepare secrets"
