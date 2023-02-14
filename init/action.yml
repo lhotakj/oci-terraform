@@ -26,23 +26,24 @@ runs:
     - name: "Install Terraform ${{ inputs.version }}"
       shell: bash
       run: |
+        echo "::debug::Download terraform"
         TERRAFORM_URL=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         wget -q -O terraform.zip ${TERRAFORM_URL}
         unzip terraform.zip
         rm terraform.zip
         terraform -v
 
+    - name: "Checkout"
+      uses: "actions/checkout@master"
+
     - name: "Prepare secrets"
       shell: bash
       run: |
-        echo ":: Running INIT"
+        echo "::debug::Prepare secrets"
         IFS=
-        echo ":: Preparing secrets"
+        echo "::debug::Preparing secrets"
         export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
         export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
         export TF_VAR_FINGERPRINT="${{ inputs.private_key_fingerprint }}"
-        echo ":: Injecting secrets"
+        echo "::debug::Injecting secrets"
         eval "IFS=\"\n\"; echo \"$(<../terraform/secrets_override.yaml)\"" > ../terraform/secrets_override.yaml
-
-    - name: "Checkout"
-      uses: "actions/checkout@master"
