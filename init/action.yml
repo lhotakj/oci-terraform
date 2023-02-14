@@ -53,8 +53,9 @@ runs:
         export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
         export TF_VAR_FINGERPRINT="${{ inputs.private_key_fingerprint }}"
         echo "Injecting secrets"
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.yml 
-        eval "IFS=\"\n\"; echo \"$(<secrets_override.yml)\"" > ${{ inputs.context }}/secrets_override.yml
+        cd ${{ inputs.context }}        
+        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.tf 
+        eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
 
     - name: "Run init"
       working-directory: ${{ inputs.context }}
