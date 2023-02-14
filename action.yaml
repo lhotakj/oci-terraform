@@ -1,5 +1,5 @@
-name: 'OCI Terraform'
-description: 'A simple action executing Terraform code (init, plan, apply, destroy)'
+name: "OCI Terraform"
+description: "A simple action executing Terraform code (init, plan, apply, destroy)"
 author: lhotakj
 branding:
   icon: hard-drive
