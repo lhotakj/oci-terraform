@@ -29,7 +29,7 @@ runs:
         echo "::debug::Download terraform"
         TERRAFORM_URL=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         wget -q -O terraform.zip ${TERRAFORM_URL}
-        unzip terraform.zip
+        unzip -qq -o terraform.zip
         rm terraform.zip
         terraform -v
 
