@@ -26,12 +26,10 @@ runs:
     - name: "Install Terraform ${{ inputs.version }}"
       shell: bash
       run: |
-        sudo apt install -y jq
-        TERRAFORM_VERSION=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
-        wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-        unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-        rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-        echo $TERRAFORM_VERSION
+        TERRAFORM_URL=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
+        wget -q -O terraform.zip ${TERRAFORM_URL}
+        unzip terraform.zip
+        rm terraform.zip
         terraform -v
 
     - name: "Prepare secrets"
