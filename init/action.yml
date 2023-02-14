@@ -26,6 +26,7 @@ runs:
     - name: "Install Terraform ${{ inputs.version }}"
       shell: bash
       run: |
+        sudo apt install -y jq
         TERRAFORM_VERSION=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
         unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
