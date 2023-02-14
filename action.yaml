@@ -1,5 +1,9 @@
 name: 'OCI Terraform'
 description: 'A simple action executing Terraform code (init, plan, apply, destroy)'
+author: lhotakj
+branding:
+  icon: hard-drive
+  color: purple
 inputs:
   terraform-version:  # id of input
     description: 'Target version of Terraform, by default uses the latest'
@@ -18,8 +22,8 @@ runs:
         echo $TERRAFORM_VERSION
         # terraform -v
 
-    - name: Prepare secrets
-      run: |
+    - run: Prepare secrets
+      shell: |
         echo ":: Running INIT"
         IFS=
         echo ":: Preparing secrets"
