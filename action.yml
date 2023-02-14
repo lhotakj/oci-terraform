@@ -4,16 +4,19 @@ author: lhotakj
 branding:
   icon: hard-drive
   color: purple
+
 inputs:
   terraform-version:  # id of input
     description: 'Target version of Terraform, by default uses the latest'
     required: false
     default: 'latest'
+
 runs:
   using: "composite"
   steps:
-    - run: Install Terraform ${{ inputs.version }}
-      shell: |
+    - name: Install Terraform ${{ inputs.version }}
+      shell: bash
+      run: |
 #        wget -q https://releases.hashicorp.com/terraform/1.3.8/terraform_1.3.8_linux_amd64.zip
 #        unzip terraform_1.3.8_linux_amd64.zip
 #        rm terraform_1.3.8_linux_amd64.zip
@@ -22,8 +25,9 @@ runs:
         echo $TERRAFORM_VERSION
         # terraform -v
 
-    - run: Prepare secrets
-      shell: |
+    - name: Prepare secrets
+      shell: bash
+      run: |
         echo ":: Running INIT"
         IFS=
         echo ":: Preparing secrets"
