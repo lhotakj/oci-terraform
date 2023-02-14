@@ -1,4 +1,4 @@
-name: "OCI Terraform"
+name: "OCI Terraform - init"
 description: "A simple action executing Terraform code (init, plan, apply, destroy)"
 author: lhotakj
 branding:
@@ -6,7 +6,7 @@ branding:
   color: purple
 
 inputs:
-  terraform-version: # id of input
+  terraform-version:
     description: 'Target version of Terraform, by default uses the latest'
     required: false
     default: 'latest'
@@ -36,6 +36,7 @@ runs:
     - name: "Prepare secrets"
       shell: bash
       run: |
+        ls -al
         echo "::debug::Prepare secrets"
         IFS=
         echo "::debug::Preparing secrets"
