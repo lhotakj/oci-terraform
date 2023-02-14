@@ -19,6 +19,10 @@ inputs:
   fingerprint:
     description: 'Fingerprint of your private key'
     required: true
+  context:
+    description: 'Folder with terraform code'
+    required: false
+    default: 'latest'
 
 runs:
   using: "composite"
@@ -27,7 +31,6 @@ runs:
       shell: bash
       run: |
         echo "::debug::Download terraform"
-        rm -rf terraform 
         TERRAFORM_URL=`curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64' | tail -1`
         wget -q -O terraform_archive.zip ${TERRAFORM_URL}
         unzip -qq -o terraform_archive.zip
@@ -38,12 +41,12 @@ runs:
       shell: bash
       run: |
         ls -al
-        echo "::debug::Prepare secrets"
+        echo "Preparing secrets"
         IFS=
         echo "::debug::Preparing secrets"
         export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
         export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
         export TF_VAR_FINGERPRINT="${{ inputs.private_key_fingerprint }}"
-        echo "::debug::Injecting secrets"
+        echo "Injecting secrets"
         echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.yml 
-        eval "IFS=\"\n\"; echo \"$(<secrets_override.yml)\"" > secrets_override.yml
+        eval "IFS=\"\n\"; echo \"$(<secrets_override.yml)\"" > ${{ inputs.context }}/secrets_override.yml
