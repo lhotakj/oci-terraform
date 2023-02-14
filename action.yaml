@@ -1,0 +1,33 @@
+name: 'OCI Terraform'
+description: 'A simple action executing Terraform code (init, plan, apply, destroy)'
+inputs:
+  terraform-version:  # id of input
+    description: 'Target version of Terraform, by default uses the latest'
+    required: false
+    default: 'latest'
+runs:
+  using: "composite"
+  steps:
+    - run: Install Terraform ${{ inputs.version }}
+      shell: |
+#        wget -q https://releases.hashicorp.com/terraform/1.3.8/terraform_1.3.8_linux_amd64.zip
+#        unzip terraform_1.3.8_linux_amd64.zip
+#        rm terraform_1.3.8_linux_amd64.zip
+#        terraform -v
+        TERRAFORM_VERSION = `curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64'  | tail -1`
+        echo $TERRAFORM_VERSION
+        # terraform -v
+
+    - name: Prepare secrets
+      run: |
+        echo ":: Running INIT"
+        IFS=
+        echo ":: Preparing secrets"
+        export TF_VAR_PRIVATE_KEY="${{ secrets.TF_VAR_PRIVATE_KEY }}"
+        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ secrets.TF_VAR_PRIVATE_KEY_PASSWORD }}"
+        export TF_VAR_FINGERPRINT="${{ secrets.TF_VAR_FINGERPRINT }}"
+        echo ":: Injecting secrets"
+        eval "IFS=\"\n\"; echo \"$(<terraform/secrets_override.yaml)\"" > terraform/secrets_override.yaml
+
+    - name: "Checkout"
+      uses: "actions/checkout@master"
