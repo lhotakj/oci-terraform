@@ -1,6 +1,9 @@
 # OCI terraform
 A basic Terraform action running Terraform code on Oracle Cloud Infrastructure (OCI)
 
+## oci-terraform/init
+Downloads and initializes your terraform working directory. It also safely injects your credentials -- this is done by overriding 
+`provider "oci" {}` section. Due to a limitation in th provider credentials cannot be used as variable, but embedded inside the file.
 
 | Inputs                 | Type     | Default value | Description                                                                                  |
 |------------------------|----------|---------------|----------------------------------------------------------------------------------------------|
@@ -10,5 +13,8 @@ A basic Terraform action running Terraform code on Oracle Cloud Infrastructure (
 | `version`              | `string` | `latest`      | Optional. value defining target version of Terraform, if not set it uses the latest version. |
 | `context`              | `string` | `.`           | Optional. Path where is located Terraform code, by default it takes the current folder.      |
 
-⚠️ The developement is still ongoing
+### Known limitations
+- Make sure do checkout first, so the folder defined in `context` variable contains your terraform code 
+
+⚠️ The development is still ongoing!
 
