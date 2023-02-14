@@ -39,9 +39,9 @@ runs:
         echo ":: Running INIT"
         IFS=
         echo ":: Preparing secrets"
-        export TF_VAR_PRIVATE_KEY="${{ input.private_key }}"
-        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ input.private_key_password }}"
-        export TF_VAR_FINGERPRINT="${{ input.private_key_fingerprint }}"
+        export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
+        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
+        export TF_VAR_FINGERPRINT="${{ inputs.private_key_fingerprint }}"
         echo ":: Injecting secrets"
         eval "IFS=\"\n\"; echo \"$(<terraform/secrets_override.yaml)\"" > terraform/secrets_override.yaml
 
