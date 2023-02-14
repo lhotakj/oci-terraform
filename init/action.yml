@@ -42,7 +42,7 @@ runs:
         export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
         export TF_VAR_FINGERPRINT="${{ inputs.private_key_fingerprint }}"
         echo ":: Injecting secrets"
-        eval "IFS=\"\n\"; echo \"$(<terraform/secrets_override.yaml)\"" > terraform/secrets_override.yaml
+        eval "IFS=\"\n\"; echo \"$(<../terraform/secrets_override.yaml)\"" > ../terraform/secrets_override.yaml
 
     - name: "Checkout"
       uses: "actions/checkout@master"
