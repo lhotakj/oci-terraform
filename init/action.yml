@@ -75,9 +75,10 @@ runs:
         echo "::debug::Injecting secrets"
         echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX0ZJTkdFUlBSSU5UfQ0KZmluZ2VycHJpbnQ9JHtURl9WQVJfRklOR0VSUFJJTlR9DQp0ZW5hbmN5PSR7VEZfVkFSX1RFTkFOQ1lfT0NJRH0NCnJlZ2lvbj0ke1RGX1ZBUl9SRUdJT059DQprZXlfZmlsZT0ke1RGX1ZBUl9LRVlfRklMRX0NCg==' | base64 --decode > ./config
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
-        mv ./config ${HOME}/.oci/config
+        cat ./config
+        mv ./config "${HOME}/.oci/"
         echo "Check"
-        cat ${HOME}/.oci/config
+        cat "${HOME}/.oci/config"
 
     - name: "Install ansible"
       shell: bash
