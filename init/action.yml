@@ -27,6 +27,21 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "Install oci"
+      shell: bash
+      run: |
+        echo "::debug::Install Oracle OCI CLI"
+        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh > /tmp/install.sh
+        chmod +x /tmp/install.sh
+        /tmp/install.sh --accept-all-defaults
+        exec -l $SHELL
+        echo "${home}bin" >> $GITHUB_PATH
+
+    - name: "Test OCI"
+      shell: bash
+      run: |
+        oci -v
+
     - name: "Install ansible"
       shell: bash
       run: |
