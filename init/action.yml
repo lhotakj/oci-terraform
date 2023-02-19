@@ -35,11 +35,14 @@ runs:
         chmod +x /tmp/install.sh
         /tmp/install.sh --accept-all-defaults
         echo "::debug::Adding path to CLI to GITHUB_PATH"
-        echo "${home}/bin" >> $GITHUB_PATH
+        echo "${HOME}/bin" >> $GITHUB_PATH
+        echo "Path .."
+        echo "$GITHUB_PATH"
 
     - name: "Test OCI"
       shell: bash
       run: |
+        
         oci -v
 
     - name: "Install ansible"
