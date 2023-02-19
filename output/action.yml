@@ -15,6 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: "get outputs"
+      working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         terraform output -json | jq -r .public_ip.value[0]
