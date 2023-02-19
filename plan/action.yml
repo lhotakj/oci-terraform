@@ -1,0 +1,20 @@
+name: "OCI Terraform - output"
+description: "A simple action executing Terraform code = output"
+author: lhotakj
+branding:
+  icon: hard-drive
+  color: purple
+
+inputs:
+  context:
+    description: 'Folder with terraform code'
+    required: false
+    default: '.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Run terraform plan"
+      shell: bash
+      run: |
+        terraform plan
