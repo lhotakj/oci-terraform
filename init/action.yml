@@ -19,6 +19,18 @@ inputs:
   fingerprint:
     description: 'Fingerprint of your private key'
     required: true
+  user_ocid:
+    description: 'User OID'
+    required: true
+  tenancy_ocid:
+    description: 'Compartment OID'
+    required: true
+  compartment_ocid:
+    description: 'Compartment OID'
+    required: true
+  region:
+    description: 'Region'
+    required: true
   context:
     description: 'Folder with terraform code'
     required: false
@@ -41,9 +53,31 @@ runs:
 
     - name: "Test OCI"
       shell: bash
-      run: |
-        
+      run: |        
         oci -v
+
+    - name: "Configure OCI"
+      shell: bash
+      run: |
+        ls -al
+        echo "Preparing secrets"
+        IFS=
+        echo "::debug::Preparing secrets"        
+        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
+        export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
+        export TF_VAR_USER_OCID="${{ inputs.user_ocid }}"
+        export TF_VAR_COMPARTMENT_OCID="${{ inputs.compartment_ocid }}"
+        export TF_VAR_TENANCY_OCID="${{ inputs.tenancy_ocid }}"
+        export TF_VAR_REGION="${{ inputs.region }}"
+        export TF_VAR_KEY_FILE="${HOME}/.oci/private_key.pem"
+        echo "${{ inputs.private_key }}" > ${TF_VAR_KEY_FILE}
+        echo "::debug::Injecting secrets"
+        cd ${{ inputs.context }}
+        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX0ZJTkdFUlBSSU5UfQ0KZmluZ2VycHJpbnQ9JHtURl9WQVJfRklOR0VSUFJJTlR9DQp0ZW5hbmN5PSR7VEZfVkFSX1RFTkFOQ1lfT0NJRH0NCnJlZ2lvbj0ke1RGX1ZBUl9SRUdJT059DQprZXlfZmlsZT0ke1RGX1ZBUl9LRVlfRklMRX0NCg==' | base64 --decode > ./config
+        eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
+        mv ./config ${HOME}/.oci/config
+        echo "Check"
+        cat ${HOME}/.oci/config
 
     - name: "Install ansible"
       shell: bash
