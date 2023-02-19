@@ -27,7 +27,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: "Install oci"
+    - name: "Install OCI"
       shell: bash
       run: |
         echo "::debug::Install Oracle OCI CLI"
