@@ -14,11 +14,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: "Set Terraform environment file"
-      working-directory: ${{ inputs.context }}    
+    - name: "Get Terraform environment file"
       uses: actions/download-artifact@v3
       with:
-        name: ".github_env"        
+        name: ".github_env"
         
     - name: "Run terraform plan"
       working-directory: ${{ inputs.context }}
