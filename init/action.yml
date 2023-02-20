@@ -88,11 +88,14 @@ runs:
         echo "debug:2"
         echo -n "" > ${GH_ENV_FILE}
         echo "debug:3"
-        env | while IFS= read -r line; do
-            echo "debug:lloop"
-            value=${line#*=}
+        env | while IFS= read -r line; do            
+            value=${line#*=}            
             name=${line%%=*}
-            [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
+            echo "debug:$name (start)"
+            if [[ $name = TF_VAR_* ]]; then
+                echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
+            fi
+            echo "debug:$name (end)"
         done
         echo "done"
         cat ${GH_ENV_FILE}
