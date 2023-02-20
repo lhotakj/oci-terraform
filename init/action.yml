@@ -46,11 +46,8 @@ runs:
       shell: bash
       run: |
         PWD=$(pwd)
-        echo '-1'
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
-        echo '-2'
         touch $PWD/.github_env
-        echo '-3'
       
     - name: "Set Terraform environment file"
       shell: bash
