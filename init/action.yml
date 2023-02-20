@@ -94,6 +94,8 @@ runs:
             name=${line%%=*}
             [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
         done
+        echo "done"
+        cat ${GH_ENV_FILE}
 
     - name: "Install ansible"
       shell: bash
