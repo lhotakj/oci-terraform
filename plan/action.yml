@@ -10,9 +10,6 @@ inputs:
     description: 'Folder with terraform code'
     required: false
     default: '.'
-  compartment_ocid:
-    description: 'Compartment OID'
-    required: true
 
 runs:
   using: "composite"
@@ -21,5 +18,4 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |        
-        export TF_VAR_compartment_ocid=${{ inputs.compartment_ocid }}
         terraform plan
