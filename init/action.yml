@@ -82,17 +82,19 @@ runs:
       shell: bash
       run: |
         echo "::debug::Prepare env file"
-        export GH_ENV_FILE=.github_env
+        GH_ENV_FILE=".github_env"
         echo "::debug::0"
         pwd
-        echo "::debug::1"
-        echo -n "" > $GH_ENV_FILE
+        echo "::debug::1"        
+        echo ${GH_ENV_FILE}
+        echo "::debug::2"
+        echo -n "" > ${GH_ENV_FILE}
         echo "::debug::Fill the env file"
         env | while IFS= read -r line; do
           echo "::debug::lloop"
           value=${line#*=}
           name=${line%%=*}
-          [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> $GH_ENV_FILE
+          [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
         done
 
     - name: "Install ansible"
