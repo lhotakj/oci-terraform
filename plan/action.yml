@@ -21,5 +21,5 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |        
-        export TF_VAR_compartment_ocid=${{ input.compartment_ocid }}
+        export TF_VAR_compartment_ocid=${{ inputs.compartment_ocid }}
         terraform plan
