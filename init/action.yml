@@ -77,12 +77,12 @@ runs:
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
         
-    - name: "Save Terraform environment"
+    - name: "Create Terraform environment file"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        echo "::debug::Prepare env file"
-        GH_ENV_FILE="${{ inputs.context }}/.github_env"
+        echo "::debug::Prepare env file"        
+        GH_ENV_FILE="$(pwd)/.github_env"
         echo ${GH_ENV_FILE}
         echo -n "" > ${GH_ENV_FILE}
         env | while IFS= read -r line; do            
@@ -94,6 +94,12 @@ runs:
         done
         pwd
         ls -al
+
+      - name: "Save Terraform environment file"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ".github_env"
+          path: "$(pwd)/.github_env"
         
     - name: "Install ansible"
       shell: bash
