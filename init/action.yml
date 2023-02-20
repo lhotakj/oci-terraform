@@ -36,6 +36,7 @@ inputs:
     required: false
     default: '.'
 
+
 runs:
   using: "composite"
   steps:
@@ -77,14 +78,16 @@ runs:
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
         
-    - name: "Create Terraform environment file"
+    - name: "Create Terraform environment file"            
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        echo "::debug::Prepare env file"        
-        GH_ENV_FILE="$(pwd)/.github_env"
-        echo ${GH_ENV_FILE}
+        echo "GH_ENV_FILE=$(pwd)/.github_env" >> $GITHUB_ENV
         echo -n "" > ${GH_ENV_FILE}
+      
+    - name: "Set Terraform environment file"
+      shell: bash
+      run: |
         env | while IFS= read -r line; do            
             value=${line#*=}            
             name=${line%%=*}            
@@ -92,14 +95,12 @@ runs:
                 echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
             fi            
         done
-        pwd
-        ls -al
 
     - name: "Save Terraform environment file"
       uses: actions/upload-artifact@v3
       with:
         name: ".github_env"
-        path: "$(pwd)/.github_env"
+        path: "${{ env.GH_ENV_FILE }}"
         
     - name: "Install ansible"
       shell: bash
