@@ -56,14 +56,14 @@ runs:
         eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
         cat secrets_override.tf
 
-    - name: "Create Terraform environment file"            
+    - name: "Create Terraform environment file"
       working-directory: ${{ inputs.context }}
       shell: bash
-      run: |           
+      run: |
         PWD=$(pwd)
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
-      
+
     - name: "Set Terraform environment file"
       shell: bash
       run: |
@@ -80,8 +80,8 @@ runs:
       with:
         name: ".github_env"
         path: "${{ env.GH_ENV_FILE }}"
-    
-    
+
+
     - name: "Install OCI"
       shell: bash
       run: |
@@ -96,7 +96,7 @@ runs:
 
     - name: "Test OCI"
       shell: bash
-      run: |        
+      run: |
         oci -v
 
     - name: "Configure OCI"
@@ -119,7 +119,7 @@ runs:
         echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX0ZJTkdFUlBSSU5UfQ0KZmluZ2VycHJpbnQ9JHtURl9WQVJfRklOR0VSUFJJTlR9DQp0ZW5hbmN5PSR7VEZfVkFSX1RFTkFOQ1lfT0NJRH0NCnJlZ2lvbj0ke1RGX1ZBUl9SRUdJT059DQprZXlfZmlsZT0ke1RGX1ZBUl9LRVlfRklMRX0NCg==' | base64 --decode > ./config
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
-                
+
     - name: "Install ansible"
       shell: bash
       run: |
@@ -144,21 +144,21 @@ runs:
         rm -rf terraform_archive.zip
         terraform -v
 
-   - name: "Prepare secrets"
-     shell: bash
-     run: |
-       ls -al
-       echo "Preparing secrets"
-       IFS=
-       echo "::debug::Preparing secrets"
-       export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
-       export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
-       export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
-       echo "Injecting secrets"
-       cd ${{ inputs.context }}
-       echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.tf
-       eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
-       cat secrets_override.tf
+#    - name: "Prepare secrets"
+    #      shell: bash
+    #      run: |
+    #        ls -al
+    #        echo "Preparing secrets"
+    #        IFS=
+    #        echo "::debug::Preparing secrets"
+    #        export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
+    #        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
+    #        export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
+    #        echo "Injecting secrets"
+    #        cd ${{ inputs.context }}
+    #        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.tf
+    #        eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
+    #        cat secrets_override.tf
 
     - name: "Run init"
       working-directory: ${{ inputs.context }}
