@@ -44,6 +44,7 @@ runs:
     - name: "Prepare secrets"
       shell: bash
       run: |
+        cat /etc/resolv.conf
         echo "Preparing secrets"
         IFS=
         echo "::debug::Preparing secrets"
