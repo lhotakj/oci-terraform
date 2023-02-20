@@ -23,16 +23,22 @@ inputs:
     description: 'User OID'
     required: true
   tenancy_ocid:
-    description: 'Compartment OID'
+    description: 'Tenancy OID'
     required: true
   compartment_ocid:
     description: 'Compartment OID'
+    required: true
+  ssh_public_key:
+    description: 'Your SSH public key you want to use for loging, this is going to be copied to the authorized_keys to the instance'
+    required: true
+  ssh_private_key:
+    description: "Your SSH private key required for authorizing the Ansible script, it won't be copied to the instances"
     required: true
   region:
     description: 'Region'
     required: true
   context:
-    description: 'Folder with terraform code'
+    description: 'Folder with terraform code, by default it uses the current folder'
     required: false
     default: '.'
 
@@ -40,6 +46,16 @@ inputs:
 runs:
   using: "composite"
   steps:
+
+    - name: "Upload SSH keys for authorization"
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ inputs.ssh_public_key }}" > ~/.ssh/id_rsa.pub
+        echo "${{ inputs.ssh_private_key }}" > ~/.ssh/id_rsa
+        chmod 0700 ~/.ssh
+        chmod 0600 ~/.ssh/id_rsa
+        chmod 0644 ~/.ssh/id_rsa.pub
 
     - name: "Prepare secrets"
       shell: bash
@@ -144,7 +160,7 @@ runs:
         rm -rf terraform_archive.zip
         terraform -v
 
-#    - name: "Prepare secrets"
+    #    - name: "Prepare secrets"
     #      shell: bash
     #      run: |
     #        ls -al
@@ -165,3 +181,12 @@ runs:
       shell: bash
       run: |
         terraform init
+
+    - name: "Cleanup of secrets"
+      if: failure()
+      shell: bash
+      run: |
+        echo "::debug::Cleanup secrets"
+        rm -rf ~/.ssh/id_rsa
+        rm -rf ~/.ssh/id_rsa.pub
+
