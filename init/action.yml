@@ -44,7 +44,8 @@ runs:
     - name: "Prepare secrets"
       shell: bash
       run: |
-        ping iaas.eu-franfurt-1.oraclecloud.com
+        sudo apt install dnsutils -y -q
+        nslookup iaas.eu-franfurt-1.oraclecloud.com
         cat /etc/resolv.conf
         echo "Preparing secrets"
         IFS=
