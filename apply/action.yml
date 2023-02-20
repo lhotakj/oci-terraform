@@ -18,4 +18,5 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
+        source ./github_env
         terraform apply -auto-approve
