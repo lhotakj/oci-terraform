@@ -44,6 +44,7 @@ runs:
     - name: "Prepare secrets"
       shell: bash
       run: |
+        ping iaas.eu-franfurt-1.oraclecloud.com
         cat /etc/resolv.conf
         echo "Preparing secrets"
         IFS=
