@@ -77,11 +77,11 @@ runs:
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
         
-    - name: "Run init"
+    - name: "Save environment variables"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        >.github_env
+        echo '' > .github_env
         env | while IFS= read -r line; do
           value=${line#*=}
           name=${line%%=*}
