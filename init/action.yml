@@ -77,15 +77,18 @@ runs:
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
         
-    - name: "Save environment variables"
+    - name: "Save Terraform environment"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        echo '' > .github_env
+        echo "::debug::Prepare env file"
+        export GH_ENV_FILE=.github_env
+        echo "" > $GH_ENV_FILE
+        echo "::debug::Fill the env file"
         env | while IFS= read -r line; do
           value=${line#*=}
           name=${line%%=*}
-          [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> .github_env
+          [[ $name = TF_VAR_* ]] && echo "export $name=\"$value\"" >> $GH_ENV_FILE
         done
 
     - name: "Install ansible"
