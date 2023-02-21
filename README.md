@@ -4,18 +4,58 @@ A basic Terraform action running Terraform code on Oracle Cloud Infrastructure (
 
 ## oci-terraform/init
 
-Downloads and initializes your terraform working directory. It also safely injects your credentials -- this is done by
-overriding
-`provider "oci" {}` section. Due to a limitation in th provider credentials cannot be used as variable, but embedded
-inside the file.
+This action has to be called very first, it doesn't do just the installation of terraform working directory and prepares secrets, but configures [Oracle Command Line Interface (CLI)](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cliconcepts.htm).
 
-| Inputs                 | Type     | Default value | Description                                                                                  |
-|------------------------|----------|---------------|----------------------------------------------------------------------------------------------|
-| `private_key`          | `string` |               | Mandatory. Content of the private file of your OCI Token                                     |
-| `fingerprint`          | `string` |               | Mandatory. Fingerprint of your OCI TOKEN                                                     |
-| `private_key_password` | `string` |               | Optional. Password of the private file of your OCI Token                                     |
-| `version`              | `string` | `latest`      | Optional. value defining target version of Terraform, if not set it uses the latest version. |
-| `context`              | `string` | `.`           | Optional. Path where is located Terraform code, by default it takes the current folder.      |
+The inputs are all what the Oracle Cloud Infrastructure [expects](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm)*, plus some specific variables    
+
+| Inputs                  | Type     | Default value | Description                                                                                                                                                                               |
+|-------------------------|----------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `private_key`*          | `string` |               | Mandatory. Content of the private file of your OCI Token, PEM format                                                                                                                      |
+| `private_key_password`* | `string` |               | Optional. In case you used a password for you OCI Token, entere it                                                                                                                        |
+| `fingerprint`*          | `string` |               | Mandatory. Fingerprint of your OCI TOKEN, [instructions](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm#four) how to get it                                    |
+| `user_oci`*             | `string` |               | Mandatory. User's OCID, see the [instructions](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm#five) where to find it                                           |
+| `tenancy_oci`*          | `string` |               | Mandatory. Tenancy's OCID, see the [instructions](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm#five) where to find it                                        |
+| `compartment_oci`*      | `string` |               | Mandatory. Compartment OCID, see the [instructions](https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/contactingsupport_topic-Finding_the_OCID_of_a_Compartment.htm) where to find it  |
+| `region`*               | `string` |               | Mandatory. The code of the region you want to deploy your architecture, refer to the list of (supported regions)[https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm] |
+| `terraform_version`     | `string` | `latest`      | Optional. Value defining target version of Terraform, if not set it uses the latest version.                                                                                              |
+| `ssh_public_key`        | `string` |               | Mandatory. Ssh key to be copied to the instances into `authorized_keys` so you can connect there.                                                                                         |
+| `ssh_private_key`       | `string` |               | Mandatory only if you run Ansible. In order to run ansible you need to provide a valid SSH key pair so Ansible can properly connect on the host and execute your playbook                 |
+| `context`               | `string` | `.`           | Optional. Path where is located Terraform code, by default it takes the current folder.                                                                                                   |
+
+### Example
+```
+jobs:
+  build-docker-images:
+    name: Terraform Oracle
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VAR_tenancy_ocid: ocid1.tenancy.oc1..aaaaaaaaXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      TF_VAR_user_ocid: ocid1.user.oc1..aaaaaaaasXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      TF_VAR_compartment_ocid: ocid1.tenancy.oc1..aaaaaaaaXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      TF_VAR_private_key: -----BEGIN RSA PRIVATE KEY-----\nProc-Type: 4,ENCRYPTED\nDEK-Info: AES-128-CBC,87BA0BA9A5A7E3BC07011D1612474A0F\n/7jwUpXQYWztjj9Yoqlpwov8RwiZBMr8auJy6dhQXtnukYHsVSE7c2qwa3k3YrjH\nXXXXXXXXXXXXXXXXXXXXX'
+      TF_VAR_private_key_password: 'mysupersecretprivatekey
+      TF_VAR_fingerprint: '59:45:c7:e8:eb:c1:bb:7e:5a:a0:55:e9:f2:14:86:5b9'
+      TF_VAR_ssh_public_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+      TF_VAR_ssh_private_key: '-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA3BxCSUrCB5GhTO64qQ\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@master"
+      - name: "Terraform init ..."
+        uses: "lhotakj/oci-terraform/init@main"
+        with:
+          private_key: ${{ secrets.TF_VAR_PRIVATE_KEY }}
+          private_key_password: ${{ secrets.TF_VAR_PRIVATE_KEY_PASSWORD }}
+          fingerprint: ${{ secrets.TF_VAR_FINGERPRINT }}
+          tenancy_ocid: ${{ env.TF_VAR_tenancy_ocid }}
+          user_ocid: ${{ env.TF_VAR_user_ocid }}
+          compartment_ocid: ${{ env.TF_VAR_compartment_ocid }}
+          region: eu-frankfurt-1
+          ssh_public_key: ${{ secrets.TF_VAR_SSH_PUBLIC_KEY }}
+          ssh_private_key: ${{ secrets.TF_VAR_SSH_PRIVATE_KEY }}
+          context: terraform
+```
 
 ### Known limitations
 

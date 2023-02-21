@@ -6,7 +6,7 @@ branding:
   color: purple
 
 inputs:
-  terraform-version:
+  terraform_version:
     description: 'Target version of Terraform, by default uses the latest'
     required: false
     default: 'latest'
@@ -28,16 +28,15 @@ inputs:
   compartment_ocid:
     description: 'Compartment OID'
     required: true
+  region:
+    description: 'Region identifier, get the list of available regions https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm. Default eu-frankfurt-1'
+    required: true
   ssh_public_key:
     description: 'Your SSH public key you want to use for loging, this is going to be copied to the authorized_keys to the instance'
     required: true
   ssh_private_key:
     description: "Your SSH private key required for authorizing the Ansible script, it won't be copied to the instances"
     required: true
-  region:
-    description: 'Region identifier, get the list of available regions https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm. Default eu-frankfurt-1'
-    required: true
-    default: 'eu-frankfurt-1'
   context:
     description: 'Folder with terraform code, by default it uses the current folder'
     required: false
@@ -108,8 +107,6 @@ runs:
         /tmp/install.sh --accept-all-defaults
         echo "::debug::Adding path to CLI to GITHUB_PATH"
         echo "${HOME}/bin" >> $GITHUB_PATH
-        echo "Path .."
-        echo "$GITHUB_PATH"
 
     - name: "Test OCI"
       shell: bash
