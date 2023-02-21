@@ -10,8 +10,11 @@ inputs:
     description: 'Folder with terraform code'
     required: false
     default: '.'
+
 outputs:
-  output_json: ${{steps.apply.outputs.output_json}}
+  output_json:
+    description: 'Terraform output in JSON format'
+    value: ${{ steps.apply.outputs.output_json }}
 
 runs:
   using: "composite"
