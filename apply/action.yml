@@ -31,8 +31,7 @@ runs:
         TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//'%'/'%25'}"
         TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//$'\n'/'%0A'}"
         TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//$'\r'/'%0D'}"
-        echo "::set-output name=output_json::$TERRAFORM_JSON_OUTPUT"
-#        echo "output_json=\"$(terraform output -json)\"" >> $GITHUB_OUTPUT
+        echo "output_json=$TERRAFORM_JSON_OUTPUT" >> $GITHUB_OUTPUT
 
     - name: "Cleanup of secrets"
       if: failure()
