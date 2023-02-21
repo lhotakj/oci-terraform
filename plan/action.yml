@@ -1,5 +1,5 @@
-name: "OCI Terraform - output"
-description: "A simple action executing Terraform code = output"
+name: "OCI Terraform - plan"
+description: "A simple action executing Terraform code = plan"
 author: lhotakj
 branding:
   icon: hard-drive
@@ -14,11 +14,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    #     - name: "Get Terraform environment file"
-    #       uses: actions/download-artifact@v3
-    #       with:
-    #         name: ".github_env"
-    #         path: ${{ inputs.context }}/.github_env
 
     - name: "Run terraform plan"
       working-directory: ${{ inputs.context }}
@@ -26,3 +21,11 @@ runs:
       run: |
         source ./.github_env
         terraform plan
+
+    - name: "Cleanup of secrets on failure"
+      if: failure()
+      shell: bash
+      run: |
+        echo "::debug::Cleanup secrets"
+        rm -rf ~/.ssh/id_rsa
+        rm -rf ~/.ssh/id_rsa.pub

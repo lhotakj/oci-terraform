@@ -10,13 +10,26 @@ inputs:
     description: 'Folder with terraform code'
     required: false
     default: '.'
+outputs:
+  output_json: ${{steps.apply.outputs.output_json}}
 
 runs:
   using: "composite"
   steps:
     - name: "Run terraform apply"
+      id: "apply"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source .github_env
         terraform apply -auto-approve
+        echo "::debug::Saving the Terraform output in JSON format"
+        echo "output_json=\"$(terraform output -json)\"" >> $GITHUB_OUTPUT   
+
+    - name: "Cleanup of secrets"
+      if: failure()
+      shell: bash
+      run: |
+        echo "::debug::Cleanup secrets"
+        rm -rf ~/.ssh/id_rsa
+        rm -rf ~/.ssh/id_rsa.pub
