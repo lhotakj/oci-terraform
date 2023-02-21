@@ -27,7 +27,12 @@ runs:
         source .github_env
         terraform apply -auto-approve
         echo "::debug::Saving the Terraform output in JSON format"
-        echo "output_json=\"$(terraform output -json)\"" >> $GITHUB_OUTPUT   
+        TERRAFORM_JSON_OUTPUT=$(terraform output -json)
+        TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//'%'/'%25'}"
+        TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//$'\n'/'%0A'}"
+        TERRAFORM_JSON_OUTPUT="${TERRAFORM_JSON_OUTPUT//$'\r'/'%0D'}"
+        echo "::set-output name=output_json::$TERRAFORM_JSON_OUTPUT"
+#        echo "output_json=\"$(terraform output -json)\"" >> $GITHUB_OUTPUT
 
     - name: "Cleanup of secrets"
       if: failure()
