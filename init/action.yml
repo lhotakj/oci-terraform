@@ -31,6 +31,9 @@ inputs:
   region:
     description: 'Region identifier, get the list of available regions https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm. Default eu-frankfurt-1'
     required: true
+  tf_state_uri:
+    description: 'URL to your `terraform.tfstate` state file located in Oracle Cloud, see https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformUsingObjectStore.htm'
+    required: true
   ssh_public_key:
     description: 'Your SSH public key you want to use for loging, this is going to be copied to the authorized_keys to the instance'
     required: true
@@ -66,9 +69,10 @@ runs:
         export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
         export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
         export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
+        export TF_STATE_URI="${{ inputs.tf_state_uri }}"
         echo "Injecting secrets"
         cd ${{ inputs.context }}
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCnByb3ZpZGVyICJvY2kiIHsNCiAgcHJpdmF0ZV9rZXkgICAgICAgICAgPSA8PEVPRg0KJFRGX1ZBUl9QUklWQVRFX0tFWQ0KRU9GDQogIHByaXZhdGVfa2V5X3Bhc3N3b3JkID0gIlwiJFRGX1ZBUl9QUklWQVRFX0tFWV9QQVNTV09SRFwiIg0KICBmaW5nZXJwcmludCAgICAgICAgICA9ICJcIiRURl9WQVJfRklOR0VSUFJJTlRcIiINCn0NCg==' | base64 --decode > secrets_override.tf
+        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX1BSSVZBVEVfS0VZDQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX1BSSVZBVEVfS0VZX1BBU1NXT1JEXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9GSU5HRVJQUklOVFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1NUQVRFX1VSSVwiIg0KICAgIHVwZGF0ZV9tZXRob2QgPSAiUFVUIg0KICB9DQp9DQo=' | base64 --decode > secrets_override.tf
         eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
         cat secrets_override.tf
 
