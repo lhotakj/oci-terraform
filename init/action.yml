@@ -133,7 +133,7 @@ runs:
         echo "::debug::Preparing secrets"        
         mkdir -p ${HOME}/.oci
         export TF_VAR_key_file="${HOME}/.oci/private_key.pem"
-        echo "${{ inputs.private_key }}" > ${TF_VAR_KEY_FILE}
+        echo "${{ inputs.private_key }}" > ${TF_VAR_key_file}
         ls -al ${HOME}/.oci
         echo "::debug::Injecting secrets"
         echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' | base64 --decode > ./config
