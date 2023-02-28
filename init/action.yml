@@ -68,6 +68,7 @@ runs:
         touch $PWD/.github_env
 
     - name: "Create Terraform environment file"
+      working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         export "TF_VAR_private_key=\"${{ inputs.private_key }}\"" >> ${GH_ENV_FILE}
@@ -93,6 +94,7 @@ runs:
         path: "${{ env.GH_ENV_FILE }}"
 
     - name: "Prepare secrets"
+      working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source ./.github_env
@@ -106,6 +108,7 @@ runs:
         cat secrets_override.tf
 
     - name: "Install OCI"
+      working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source ./.github_env
@@ -122,6 +125,7 @@ runs:
         oci -v
 
     - name: "Configure OCI"
+      working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source ./.github_env
