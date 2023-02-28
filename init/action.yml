@@ -45,7 +45,6 @@ inputs:
     required: false
     default: '.'
 
-
 runs:
   using: "composite"
   steps:
@@ -60,22 +59,6 @@ runs:
         chmod 0600 ~/.ssh/id_rsa
         chmod 0644 ~/.ssh/id_rsa.pub
 
-    - name: "Prepare secrets"
-      shell: bash
-      run: |
-        echo "Preparing secrets"
-        IFS=
-        echo "::debug::Preparing secrets"
-        export TF_VAR_PRIVATE_KEY="${{ inputs.private_key }}"
-        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
-        export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
-        export TF_STATE_URI="${{ inputs.tf_state_uri }}"
-        echo "Injecting secrets"
-        cd ${{ inputs.context }}
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX1BSSVZBVEVfS0VZDQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX1BSSVZBVEVfS0VZX1BBU1NXT1JEXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9GSU5HRVJQUklOVFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1NUQVRFX1VSSVwiIg0KICAgIHVwZGF0ZV9tZXRob2QgPSAiUFVUIg0KICB9DQp9DQo=' | base64 --decode > secrets_override.tf
-        eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
-        cat secrets_override.tf
-
     - name: "Create Terraform environment file"
       working-directory: ${{ inputs.context }}
       shell: bash
@@ -84,16 +67,24 @@ runs:
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
 
-    - name: "Set Terraform environment file"
+    - name: "Create Terraform environment file"
       shell: bash
       run: |
-        env | while IFS= read -r line; do            
-            value=${line#*=}            
-            name=${line%%=*}            
-            if [[ $name = TF_VAR_* ]]; then
-                echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
-            fi            
-        done
+        export "TF_VAR_private_key=\"${{ inputs.private_key }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_private_key_password=\"${{ inputs.private_key_password }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_fingerprint=\"${{ inputs.fingerprint }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_user_ocid=\"${{ inputs.user_ocid }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_tenancy_ocid=\"${{ inputs.tenancy_ocid }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_compartment_ocid=\"${{ inputs.compartment_ocid }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
+        export "TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
+        # env | while IFS= read -r line; do            
+        #    value=${line#*=}            
+        #    name=${line%%=*}            
+        #    if [[ $name = TF_VAR_* ]]; then
+        #        echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
+        #    fi            
+        #done
 
     - name: "Save Terraform environment file"
       uses: actions/upload-artifact@v3
@@ -101,11 +92,24 @@ runs:
         name: ".github_env"
         path: "${{ env.GH_ENV_FILE }}"
 
+    - name: "Prepare secrets"
+      shell: bash
+      run: |
+        source ./.github_env
+        echo "Preparing secrets"
+        IFS=
+        echo "::debug::Preparing secrets"        
+        echo "::Injecting secrets"
+        cd ${{ inputs.context }}
+        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlBVVCINCiAgfQ0KfQ0K' | base64 --decode > secrets_override.tf
+        eval "IFS=\"\n\"; echo \"$(<secrets_override.tf)\"" > secrets_override.tf
+        cat secrets_override.tf
 
     - name: "Install OCI"
       shell: bash
       run: |
-        echo "::debug::Install Oracle OCI CLI"
+        source ./.github_env
+        echo "::debug::Install Oracle OCI CLI"                
         curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh > /tmp/install.sh
         chmod +x /tmp/install.sh
         /tmp/install.sh --accept-all-defaults
@@ -120,23 +124,19 @@ runs:
     - name: "Configure OCI"
       shell: bash
       run: |
+        source ./.github_env
         echo "Preparing secrets"
         IFS=
         echo "::debug::Preparing secrets"        
-        export TF_VAR_PRIVATE_KEY_PASSWORD="${{ inputs.private_key_password }}"
-        export TF_VAR_FINGERPRINT="${{ inputs.fingerprint }}"
-        export TF_VAR_USER_OCID="${{ inputs.user_ocid }}"
-        export TF_VAR_COMPARTMENT_OCID="${{ inputs.compartment_ocid }}"
-        export TF_VAR_TENANCY_OCID="${{ inputs.tenancy_ocid }}"
-        export TF_VAR_REGION="${{ inputs.region }}"
         mkdir -p ${HOME}/.oci
-        export TF_VAR_KEY_FILE="${HOME}/.oci/private_key.pem"
+        export TF_VAR_key_file="${HOME}/.oci/private_key.pem"
         echo "${{ inputs.private_key }}" > ${TF_VAR_KEY_FILE}
         ls -al ${HOME}/.oci
         echo "::debug::Injecting secrets"
-        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX0ZJTkdFUlBSSU5UfQ0KZmluZ2VycHJpbnQ9JHtURl9WQVJfRklOR0VSUFJJTlR9DQp0ZW5hbmN5PSR7VEZfVkFSX1RFTkFOQ1lfT0NJRH0NCnJlZ2lvbj0ke1RGX1ZBUl9SRUdJT059DQprZXlfZmlsZT0ke1RGX1ZBUl9LRVlfRklMRX0NCg==' | base64 --decode > ./config
+        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' | base64 --decode > ./config
         eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
         mv ./config "${HOME}/.oci/"
+        cat ${HOME}/.oci/config
 
     - name: "Install ansible"
       shell: bash
@@ -166,6 +166,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
+        source ./.github_env
         terraform init
 
     - name: "Cleanup of secrets"

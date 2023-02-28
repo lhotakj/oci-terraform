@@ -24,7 +24,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        source .github_env
+        source ./.github_env
         terraform apply -auto-approve
         echo "::debug::Saving the Terraform output in JSON format"
         TERRAFORM_JSON_OUTPUT=$(terraform output -json)
