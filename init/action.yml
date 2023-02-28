@@ -102,9 +102,10 @@ runs:
         IFS=
         echo "::debug::Preparing secrets"        
         echo "::Injecting secrets"
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlBVVCINCiAgfQ0KfQ0K' | base64 --decode > secrets_override.tf
+        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlBVVCINCiAgfQ0KfQ0K' | base64 --decode > secrets_override.yaml
         eval "IFS=\"\n\"; echo \"$(<secrets_override.yaml)\"" > secrets_override.tf
         cat secrets_override.tf
+        ls -al
 
     - name: "Install OCI"
       working-directory: ${{ inputs.context }}
