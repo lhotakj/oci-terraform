@@ -71,14 +71,14 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        export "TF_VAR_private_key=\"${{ inputs.private_key }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_private_key_password=\"${{ inputs.private_key_password }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_fingerprint=\"${{ inputs.fingerprint }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_user_ocid=\"${{ inputs.user_ocid }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_tenancy_ocid=\"${{ inputs.tenancy_ocid }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_compartment_ocid=\"${{ inputs.compartment_ocid }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
-        export "TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_private_key=\"${{ inputs.private_key }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_private_key_password=\"${{ inputs.private_key_password }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_fingerprint=\"${{ inputs.fingerprint }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_user_ocid=\"${{ inputs.user_ocid }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_tenancy_ocid=\"${{ inputs.tenancy_ocid }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_compartment_ocid=\"${{ inputs.compartment_ocid }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
         # env | while IFS= read -r line; do            
         #    value=${line#*=}            
         #    name=${line%%=*}            
