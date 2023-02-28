@@ -59,7 +59,7 @@ runs:
         chmod 0600 ~/.ssh/id_rsa
         chmod 0644 ~/.ssh/id_rsa.pub
 
-    - name: "Create Terraform environment file"
+    - name: "Prepare Terraform environment file"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
@@ -67,7 +67,7 @@ runs:
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
 
-    - name: "Create Terraform environment file"
+    - name: "Fill Terraform environment file"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
@@ -93,7 +93,7 @@ runs:
         name: ".github_env"
         path: "${{ env.GH_ENV_FILE }}"
 
-    - name: "Prepare secrets"
+    - name: "Prepare secrets override Terraform file"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
