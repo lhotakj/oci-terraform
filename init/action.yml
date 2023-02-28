@@ -97,7 +97,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        source ./.github_env
+        source ${GH_ENV_FILE}        
         echo "Preparing secrets"
         IFS=
         echo "::debug::Preparing secrets"        
@@ -110,7 +110,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        source ./.github_env
+        source ${GH_ENV_FILE}
         echo "::debug::Install Oracle OCI CLI"                
         curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh > /tmp/install.sh
         chmod +x /tmp/install.sh
@@ -127,7 +127,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        source ./.github_env
+        source ${GH_ENV_FILE}
         echo "Preparing secrets"
         IFS=
         echo "::debug::Preparing secrets"        
@@ -169,7 +169,7 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
-        source ./.github_env
+        source ${GH_ENV_FILE}
         terraform init
 
     - name: "Cleanup of secrets"
