@@ -63,6 +63,9 @@ runs:
       shell: bash
       run: |
         PWD=$(pwd)
+        echo "::Preparing config_factory.py"
+        echo 'IyEvdXNyL2Jpbi9weXRob24zDQoNCmltcG9ydCBvcw0KZnJvbSB0eXBpbmcgaW1wb3J0IElPDQoNCmltcG9ydCBjbGljaw0KDQoNCkBjbGljay5jb21tYW5kKCkNCkBjbGljay5hcmd1bWVudCgndGVtcGxhdGUnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPVRydWUpKQ0KQGNsaWNrLmFyZ3VtZW50KCdvdXRwdXQnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPUZhbHNlKSkNCmRlZiBjb25maWdfZmFjdG9yeSh0ZW1wbGF0ZSwgb3V0cHV0KToNCiAgICBwcmludCgiUmVhZGluZyB0ZW1wbGF0ZSAke3RlbXBsYXRlfSAuLi4iKQ0KICAgIHJlYWRfZmlsZTogSU8gPSBvcGVuKHRlbXBsYXRlLCBtb2RlPSdyJykNCiAgICBjb250ZW50OiBzdHIgPSByZWFkX2ZpbGUucmVhZCgpDQogICAgcmVhZF9maWxlLmNsb3NlKCkNCg0KICAgIGZvciBuYW1lLCB2YWx1ZSBpbiBvcy5lbnZpcm9uLml0ZW1zKCk6DQogICAgICAgIGlmIG5hbWUuc3RhcnRzd2l0aCgnVEZfVkFSXycpOg0KICAgICAgICAgICAgY29udGVudCA9IGNvbnRlbnQucmVwbGFjZSgnJHsnICsgbmFtZSArICd9JywgdmFsdWUpDQogICAgICAgICAgICBjb250ZW50ID0gY29udGVudC5yZXBsYWNlKCckJyArIG5hbWUgKyAnJywgdmFsdWUpDQoNCiAgICBwcmludCgiV3JpdGluZyBvdXRwdXQgZmlsZSAke291dHB1dH0gLi4uIikNCiAgICB3cml0ZV9maWxlOiBJTyA9IG9wZW4ob3V0cHV0LCAidyIpDQogICAgd3JpdGVfZmlsZS53cml0ZShjb250ZW50KQ0KICAgIHdyaXRlX2ZpbGUuY2xvc2UoKQ0KDQoNCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6DQogICAgcHJpbnQoIkNvbmZpZyBmYWN0b3J5IDAuMSIpDQogICAgY29uZmlnX2ZhY3RvcnkoKQ0K' |  base64 --decode > ./config_factory.py
+        chmod +x config_factory.py
         echo "CONFIG_FACTORY=$PWD/config_factory.py" >> $GITHUB_ENV
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
