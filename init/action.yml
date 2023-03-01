@@ -59,18 +59,19 @@ runs:
         chmod 0600 ~/.ssh/id_rsa
         chmod 0644 ~/.ssh/id_rsa.pub
 
-    - name: "Prepare Terraform environment file"
+    - name: "Prepare config factory ⚙️"
+      shell: bash
+      run: |
+        PWD=$(pwd)
+        echo "CONFIG_FACTORY=$PWD/config_factory.py" >> $GITHUB_ENV
+
+    - name: "Prepare Terraform environment file ⚒️"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         PWD=$(pwd)
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
-
-    - name: "Fill Terraform environment file"
-      working-directory: ${{ inputs.context }}
-      shell: bash
-      run: |
         echo "export TF_VAR_private_key=\"${{ inputs.private_key }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_private_key_password=\"${{ inputs.private_key_password }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_fingerprint=\"${{ inputs.fingerprint }}\"" >> ${GH_ENV_FILE}
@@ -79,35 +80,29 @@ runs:
         echo "export TF_VAR_compartment_ocid=\"${{ inputs.compartment_ocid }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
-        # env | while IFS= read -r line; do            
-        #    value=${line#*=}            
-        #    name=${line%%=*}            
-        #    if [[ $name = TF_VAR_* ]]; then
-        #        echo "export $name=\"$value\"" >> ${GH_ENV_FILE}
-        #    fi            
-        #done
 
-    - name: "Save Terraform environment file"
+    - name: "Save Terraform environment file 💾"
       uses: actions/upload-artifact@v3
       with:
         name: ".github_env"
         path: "${{ env.GH_ENV_FILE }}"
 
-    - name: "Prepare secrets override Terraform file"
+    - name: "Prepare secrets override Terraform file 🔐"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source ${GH_ENV_FILE}        
         echo "Preparing secrets"
-        IFS=
-        echo "::debug::Preparing secrets"        
-        echo "::Injecting secrets"
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlwiUFVUXCIiDQogIH0NCn0NCg==' | base64 --decode > secrets_override.yaml
-        eval "IFS=\"\n\"; echo \"$(<secrets_override.yaml)\"" > secrets_override.tf
+        python3 $CONFIG_FACTORY ./secrets_override.yaml secrets_override.tf
+#        IFS=
+#        echo "::debug::Preparing secrets"
+#        echo "::Injecting secrets"
+#        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlwiUFVUXCIiDQogIH0NCn0NCg==' | base64 --decode > secrets_override.yaml
+#        eval "IFS=\"\n\"; echo \"$(<secrets_override.yaml)\"" > secrets_override.tf
         cat secrets_override.tf
-        ls -al
+#        ls -al
 
-    - name: "Install OCI"
+    - name: "Install OCI ⛏️"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
@@ -119,12 +114,12 @@ runs:
         echo "::debug::Adding path to CLI to GITHUB_PATH"
         echo "${HOME}/bin" >> $GITHUB_PATH
 
-    - name: "Test OCI"
+    - name: "Test OCI 🧪"
       shell: bash
       run: |
         oci -v
 
-    - name: "Configure OCI"
+    - name: "Configure OCI 👷‍♂️"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
@@ -137,12 +132,14 @@ runs:
         echo "${{ inputs.private_key }}" > ${TF_VAR_key_file}
         ls -al ${HOME}/.oci
         echo "::debug::Injecting secrets"
-        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' | base64 --decode > ./config
-        eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
-        mv ./config "${HOME}/.oci/"
-        # cat ${HOME}/.oci/config
+        python3 $CONFIG_FACTORY ./config ${HOME}/.oci/config
+#
+#        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' | base64 --decode > ./config
+#        eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
+#        mv ./config "${HOME}/.oci/"
+        cat ${HOME}/.oci/config
 
-    - name: "Install ansible"
+    - name: "Install ansible ⚒️"
       shell: bash
       run: |
         echo "::debug::Install ansible"
@@ -151,7 +148,7 @@ runs:
         sudo apt-add-repository --yes --update ppa:ansible/ansible
         sudo apt install ansible -y -q
 
-    - name: "Install Terraform ${{ inputs.version }}"
+    - name: "Install Terraform ${{ inputs.version }} ⚒️"
       shell: bash
       run: |
         echo "::debug::Download terraform"
@@ -166,14 +163,14 @@ runs:
         rm -rf terraform_archive.zip
         terraform -v
 
-    - name: "Run init"
+    - name: "Run init 🚀"
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
         source ${GH_ENV_FILE}
         terraform init
 
-    - name: "Cleanup of secrets"
+    - name: "Cleanup of secrets 🧹"
       if: failure()
       shell: bash
       run: |
