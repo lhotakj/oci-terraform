@@ -59,20 +59,25 @@ runs:
         chmod 0600 ~/.ssh/id_rsa
         chmod 0644 ~/.ssh/id_rsa.pub
 
-    - name: "Prepare global variables and templates ⚙️"
+    - name: "Prepare global env and tools ⚙️"
       shell: bash
       run: |
         PWD=$(pwd)
         echo "::Preparing config"
         echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' |  base64 --decode > ./config
-        echo "::Preparing secrets_override.yaml"
-        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiJFRGX1ZBUl9wcml2YXRlX2tleV9wYXNzd29yZCINCiAgZmluZ2VycHJpbnQgICAgICAgICAgPSAiJFRGX1ZBUl9maW5nZXJwcmludCINCn0NCg0KLy8gdGYgc3RhdGUgZmlsZSANCiAgDQp0ZXJyYWZvcm0gew0KICBiYWNrZW5kICJodHRwIiB7DQogICAgYWRkcmVzcyAgICAgICA9ICIkVEZfVkFSX3RmX3N0YXRlX3VyaSINCiAgICB1cGRhdGVfbWV0aG9kID0gIlBVVCINCiAgfQ0KfQ0K' |  base64 --decode > ./secrets_override.yaml
-        echo "::Preparing config_factory.py"        
-        echo 'IyEvdXNyL2Jpbi9weXRob24zDQoNCmltcG9ydCBvcw0KZnJvbSB0eXBpbmcgaW1wb3J0IElPDQoNCmltcG9ydCBjbGljaw0KDQoNCkBjbGljay5jb21tYW5kKCkNCkBjbGljay5hcmd1bWVudCgndGVtcGxhdGUnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPVRydWUpKQ0KQGNsaWNrLmFyZ3VtZW50KCdvdXRwdXQnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPUZhbHNlKSkNCmRlZiBjb25maWdfZmFjdG9yeSh0ZW1wbGF0ZSwgb3V0cHV0KToNCiAgICBwcmludCgiUmVhZGluZyB0ZW1wbGF0ZSAke3RlbXBsYXRlfSAuLi4iKQ0KICAgIHJlYWRfZmlsZTogSU8gPSBvcGVuKHRlbXBsYXRlLCBtb2RlPSdyJykNCiAgICBjb250ZW50OiBzdHIgPSByZWFkX2ZpbGUucmVhZCgpDQogICAgcmVhZF9maWxlLmNsb3NlKCkNCg0KICAgIGZvciBuYW1lLCB2YWx1ZSBpbiBvcy5lbnZpcm9uLml0ZW1zKCk6DQogICAgICAgIGlmIG5hbWUuc3RhcnRzd2l0aCgnVEZfVkFSXycpOg0KICAgICAgICAgICAgY29udGVudCA9IGNvbnRlbnQucmVwbGFjZSgnJHsnICsgbmFtZSArICd9JywgdmFsdWUpDQogICAgICAgICAgICBjb250ZW50ID0gY29udGVudC5yZXBsYWNlKCckJyArIG5hbWUgKyAnJywgdmFsdWUpDQoNCiAgICBwcmludCgiV3JpdGluZyBvdXRwdXQgZmlsZSAke291dHB1dH0gLi4uIikNCiAgICB3cml0ZV9maWxlOiBJTyA9IG9wZW4ob3V0cHV0LCAidyIpDQogICAgd3JpdGVfZmlsZS53cml0ZShjb250ZW50KQ0KICAgIHdyaXRlX2ZpbGUuY2xvc2UoKQ0KDQoNCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6DQogICAgcHJpbnQoIkNvbmZpZyBmYWN0b3J5IDAuMSIpDQogICAgY29uZmlnX2ZhY3RvcnkoKQ0K' |  base64 --decode > ./config_factory.py
         chmod +x config_factory.py
         echo "CONFIG_FACTORY=$PWD/config_factory.py" >> $GITHUB_ENV
         echo "GH_ENV_FILE=$PWD/.github_env" >> $GITHUB_ENV
         touch $PWD/.github_env
+
+    - name: "Prepare template files ⚙️"
+      working-directory: ${{ inputs.context }}
+      shell: bash
+      run: |
+        echo "::Preparing secrets_override.yaml"
+        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiJFRGX1ZBUl9wcml2YXRlX2tleV9wYXNzd29yZCINCiAgZmluZ2VycHJpbnQgICAgICAgICAgPSAiJFRGX1ZBUl9maW5nZXJwcmludCINCn0NCg0KLy8gdGYgc3RhdGUgZmlsZSANCiAgDQp0ZXJyYWZvcm0gew0KICBiYWNrZW5kICJodHRwIiB7DQogICAgYWRkcmVzcyAgICAgICA9ICIkVEZfVkFSX3RmX3N0YXRlX3VyaSINCiAgICB1cGRhdGVfbWV0aG9kID0gIlBVVCINCiAgfQ0KfQ0K' |  base64 --decode > ./secrets_override.yaml
+        echo "::Preparing config_factory.py"        
+        echo 'IyEvdXNyL2Jpbi9weXRob24zDQoNCmltcG9ydCBvcw0KZnJvbSB0eXBpbmcgaW1wb3J0IElPDQoNCmltcG9ydCBjbGljaw0KDQoNCkBjbGljay5jb21tYW5kKCkNCkBjbGljay5hcmd1bWVudCgndGVtcGxhdGUnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPVRydWUpKQ0KQGNsaWNrLmFyZ3VtZW50KCdvdXRwdXQnLCB0eXBlPWNsaWNrLlBhdGgoZXhpc3RzPUZhbHNlKSkNCmRlZiBjb25maWdfZmFjdG9yeSh0ZW1wbGF0ZSwgb3V0cHV0KToNCiAgICBwcmludCgiUmVhZGluZyB0ZW1wbGF0ZSAke3RlbXBsYXRlfSAuLi4iKQ0KICAgIHJlYWRfZmlsZTogSU8gPSBvcGVuKHRlbXBsYXRlLCBtb2RlPSdyJykNCiAgICBjb250ZW50OiBzdHIgPSByZWFkX2ZpbGUucmVhZCgpDQogICAgcmVhZF9maWxlLmNsb3NlKCkNCg0KICAgIGZvciBuYW1lLCB2YWx1ZSBpbiBvcy5lbnZpcm9uLml0ZW1zKCk6DQogICAgICAgIGlmIG5hbWUuc3RhcnRzd2l0aCgnVEZfVkFSXycpOg0KICAgICAgICAgICAgY29udGVudCA9IGNvbnRlbnQucmVwbGFjZSgnJHsnICsgbmFtZSArICd9JywgdmFsdWUpDQogICAgICAgICAgICBjb250ZW50ID0gY29udGVudC5yZXBsYWNlKCckJyArIG5hbWUgKyAnJywgdmFsdWUpDQoNCiAgICBwcmludCgiV3JpdGluZyBvdXRwdXQgZmlsZSAke291dHB1dH0gLi4uIikNCiAgICB3cml0ZV9maWxlOiBJTyA9IG9wZW4ob3V0cHV0LCAidyIpDQogICAgd3JpdGVfZmlsZS53cml0ZShjb250ZW50KQ0KICAgIHdyaXRlX2ZpbGUuY2xvc2UoKQ0KDQoNCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6DQogICAgcHJpbnQoIkNvbmZpZyBmYWN0b3J5IDAuMSIpDQogICAgY29uZmlnX2ZhY3RvcnkoKQ0K' |  base64 --decode > ./config_factory.py
 
     - name: "Prepare Terraform environment file ⚒️"
       working-directory: ${{ inputs.context }}
