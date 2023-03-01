@@ -94,13 +94,7 @@ runs:
         source ${GH_ENV_FILE}        
         echo "Preparing secrets"
         python3 $CONFIG_FACTORY ./secrets_override.yaml secrets_override.tf
-#        IFS=
-#        echo "::debug::Preparing secrets"
-#        echo "::Injecting secrets"
-#        echo 'Ly8gb3ZlcnJpZGUgdGVtcGxhdGUNCg0KcHJvdmlkZXIgIm9jaSIgew0KICBwcml2YXRlX2tleSAgICAgICAgICA9IDw8RU9GDQokVEZfVkFSX3ByaXZhdGVfa2V5DQpFT0YNCiAgcHJpdmF0ZV9rZXlfcGFzc3dvcmQgPSAiXCIkVEZfVkFSX3ByaXZhdGVfa2V5X3Bhc3N3b3JkXCIiDQogIGZpbmdlcnByaW50ICAgICAgICAgID0gIlwiJFRGX1ZBUl9maW5nZXJwcmludFwiIg0KfQ0KDQovLyB0ZiBzdGF0ZSBmaWxlIA0KICANCnRlcnJhZm9ybSB7DQogIGJhY2tlbmQgImh0dHAiIHsNCiAgICBhZGRyZXNzICAgICAgID0gIlwiJFRGX1ZBUl90Zl9zdGF0ZV91cmlcIiINCiAgICB1cGRhdGVfbWV0aG9kID0gIlwiUFVUXCIiDQogIH0NCn0NCg==' | base64 --decode > secrets_override.yaml
-#        eval "IFS=\"\n\"; echo \"$(<secrets_override.yaml)\"" > secrets_override.tf
         cat secrets_override.tf
-#        ls -al
 
     - name: "Install OCI ⛏️"
       working-directory: ${{ inputs.context }}
@@ -133,10 +127,6 @@ runs:
         ls -al ${HOME}/.oci
         echo "::debug::Injecting secrets"
         python3 $CONFIG_FACTORY ./config ${HOME}/.oci/config
-#
-#        echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' | base64 --decode > ./config
-#        eval "IFS=\"\n\"; echo \"$(<./config)\"" > ./config
-#        mv ./config "${HOME}/.oci/"
         cat ${HOME}/.oci/config
 
     - name: "Install ansible ⚒️"
