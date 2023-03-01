@@ -74,6 +74,9 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
+        echo "::Saving working directory"
+        PWD=$(pwd)
+        echo "WORKING_DIRECTORY=$PWD" >> $GITHUB_ENV
         echo "::Preparing config"
         echo 'W0RFRkFVTFRdDQp1c2VyPSR7VEZfVkFSX3VzZXJfb2NpZH0NCmZpbmdlcnByaW50PSR7VEZfVkFSX2ZpbmdlcnByaW50fQ0KdGVuYW5jeT0ke1RGX1ZBUl90ZW5hbmN5X29jaWR9DQpyZWdpb249JHtURl9WQVJfcmVnaW9ufQ0Ka2V5X2ZpbGU9JHtURl9WQVJfa2V5X2ZpbGV9DQo=' |  base64 --decode > ./config
         echo "::Preparing secrets_override.yaml"
@@ -92,12 +95,6 @@ runs:
         echo "export TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
 
-    - name: "Save Terraform environment file 💾"
-      uses: actions/upload-artifact@v3
-      with:
-        name: ".github_env"
-        path: "${{ env.GH_ENV_FILE }}"
-
     - name: "Prepare secrets override Terraform file 🔐"
       working-directory: ${{ inputs.context }}
       shell: bash
@@ -106,6 +103,12 @@ runs:
         echo "Preparing secrets"
         python3 $CONFIG_FACTORY ./secrets_override.yaml secrets_override.tf
         cat secrets_override.tf
+
+    - name: "Save Terraform environment file 💾"
+      uses: actions/upload-artifact@v3
+      with:
+        name: "secrets"
+        path: "${{ env.WORKING_DIRECTORY }}/secrets_override.tf"
 
     - name: "Install OCI ⛏️"
       working-directory: ${{ inputs.context }}
