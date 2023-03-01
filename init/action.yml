@@ -94,6 +94,8 @@ runs:
         echo "export TF_VAR_compartment_ocid=\"${{ inputs.compartment_ocid }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_region=\"${{ inputs.region }}\"" >> ${GH_ENV_FILE}
         echo "export TF_VAR_tf_state_uri=\"${{ inputs.tf_state_uri }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_ssh_public_key=\"${{ inputs.ssh_public_key }}\"" >> ${GH_ENV_FILE}
+        echo "export TF_VAR_ssh_private_key=\"${{ inputs.ssh_private_key }}\"" >> ${GH_ENV_FILE}
 
     - name: "Prepare secrets override Terraform file 🔐"
       working-directory: ${{ inputs.context }}
