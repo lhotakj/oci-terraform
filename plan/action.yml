@@ -19,6 +19,9 @@ runs:
       working-directory: ${{ inputs.context }}
       shell: bash
       run: |
+        env | grep GITHUB
+        env | grep GH
+        ls -al
         source ./.github_env
         terraform plan
 
